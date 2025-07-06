@@ -181,18 +181,30 @@ app.patch('/api/sensor-data/accelerometer', async (req, res) => {
 // Endpoint para actualizar solo el giroscopio
 app.patch('/api/sensor-data/gyroscope', async (req, res) => {
     try {
-        const db = getDB();
-        const collection = db.collection('sensorData');
-        
         const { deviceId, gyroscope } = req.body;
         
         if (!deviceId || !gyroscope) {
             return res.status(400).json({ error: 'deviceId and gyroscope are required' });
         }
 
+        // Asegurar que los valores sean números
+        const x = parseFloat(gyroscope.x);
+        const y = parseFloat(gyroscope.y);
+        const z = parseFloat(gyroscope.z);
+        
+        if (isNaN(x) || isNaN(y) || isNaN(z)) {
+            return res.status(400).json({ error: 'Invalid gyroscope values' });
+        }
+
+        // Actualizar en base de datos
         const result = await collection.updateOne(
             { deviceId },
-            { $set: { gyroscope, updatedAt: new Date() } },
+            { $set: { 
+                "gyroscope.x": x,
+                "gyroscope.y": y,
+                "gyroscope.z": z,
+                updatedAt: new Date() 
+            }},
             { upsert: true }
         );
         

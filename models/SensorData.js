@@ -7,10 +7,10 @@ const accelerometerSchema = new mongoose.Schema({
 });
 
 const gyroscopeSchema = new mongoose.Schema({
-    x: Number,
-    y: Number,
-    z: Number
-});
+    x: { type: Number, required: true },
+    y: { type: Number, required: true },
+    z: { type: Number, required: true }
+}, { _id: false });
 
 const sensorDataSchema = new mongoose.Schema({
     deviceId: { type: String, required: true },
